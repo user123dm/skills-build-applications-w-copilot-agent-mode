@@ -4,13 +4,13 @@ import { getJson } from '../api/client.js';
 type Props = {
   title: string;
   description: string;
-  endpoint: string;
+  loadData: () => Promise<unknown>;
   emptyMessage: string;
   getItems: (payload: unknown) => unknown[];
   renderItem: (item: Record<string, unknown>, index: number) => React.ReactNode;
 };
 
-export function CapabilityCard({ title, description, endpoint, emptyMessage, getItems, renderItem }: Props) {
+export function CapabilityCard({ title, description, loadData, emptyMessage, getItems, renderItem }: Props) {
   const [items, setItems] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export function CapabilityCard({ title, description, endpoint, emptyMessage, get
     setLoading(true);
     setError(null);
 
-    getJson(endpoint)
+    loadData()
       .then((payload) => {
         if (!active) return;
         setItems(getItems(payload));
@@ -38,7 +38,7 @@ export function CapabilityCard({ title, description, endpoint, emptyMessage, get
     return () => {
       active = false;
     };
-  }, [endpoint]);
+  }, [loadData]);
 
   return (
     <section className="card h-100">
